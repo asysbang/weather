@@ -28,20 +28,20 @@ public class WeekPage {
 	}
 
 	public void loadScene(Scene scene, Font font, VertexBufferObjectManager vertexBufferObjectManager, WeatherInfo weather) {
-		date1 = new Text(-Config.CAMERA_WIDTH, 30, font, "", 40, vertexBufferObjectManager);
+		date1 = new Text(-Config.CAMERA_WIDTH, 80, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date1);
 
-		date2 = new Text(-Config.CAMERA_WIDTH, 70, font, "", 40, vertexBufferObjectManager);
+		date2 = new Text(-Config.CAMERA_WIDTH, 120, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date2);
 
-		date3 = new Text(-Config.CAMERA_WIDTH, 110, font, "", 40, vertexBufferObjectManager);
+		date3 = new Text(-Config.CAMERA_WIDTH, 160, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date3);
-		date4 = new Text(-Config.CAMERA_WIDTH, 150, font, "", 40, vertexBufferObjectManager);
+		date4 = new Text(-Config.CAMERA_WIDTH, 200, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date4);
-		date5 = new Text(-Config.CAMERA_WIDTH, 190, font, "", 40, vertexBufferObjectManager);
+		date5 = new Text(-Config.CAMERA_WIDTH, 240, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date5);
 
-		date6 = new Text(-Config.CAMERA_WIDTH, 230, font, "", 40, vertexBufferObjectManager);
+		date6 = new Text(-Config.CAMERA_WIDTH, 280, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date6);
 
 	}

@@ -10,7 +10,7 @@ import com.asys.weather.model.WeatherInfo;
 
 public class HomePage {
 
-	private Text curTemp, wind, dampness, todayTemp, curState, todayState, ptime, date, lunar;
+	private Text curTemp, wind, dampness, todayTemp, curState, todayState, ptime;
 
 	public HomePage() {
 
@@ -21,30 +21,25 @@ public class HomePage {
 	}
 
 	public void loadScene(Scene scene, Font font, VertexBufferObjectManager vertexBufferObjectManager, WeatherInfo weather) {
-		curTemp = new Text(50, 30, font, "当前温度：" + weather.getTemp() + " ℃", 40, vertexBufferObjectManager);
+		curTemp = new Text(50, 120, font, "当前温度：" + weather.getTemp() + " ℃", 40, vertexBufferObjectManager);
 		scene.attachChild(curTemp);
 
-		curState = new Text(50, 70, font, "当前天气：" + weather.getCurState(), 40, vertexBufferObjectManager);
+		curState = new Text(50, 150, font, "当前天气：" + weather.getCurState(), 40, vertexBufferObjectManager);
 		scene.attachChild(curState);
 
-		wind = new Text(50, 110, font, "当前风向：" + weather.getWind(), 40, vertexBufferObjectManager);
+		wind = new Text(50, 180, font, "当前风向：" + weather.getWind(), 40, vertexBufferObjectManager);
 		scene.attachChild(wind);
-		dampness = new Text(50, 150, font, "当前湿度：" + weather.getDampness(), 40, vertexBufferObjectManager);
+		dampness = new Text(50, 210, font, "当前湿度：" + weather.getDampness(), 40, vertexBufferObjectManager);
 		scene.attachChild(dampness);
-		todayTemp = new Text(50, 220, font, "今日温度：" + weather.getTodayTemp(), 40, vertexBufferObjectManager);
+		todayTemp = new Text(50, 250, font, "今日温度：" + weather.getTodayTemp(), 40, vertexBufferObjectManager);
 		scene.attachChild(todayTemp);
 
-		todayState = new Text(50, 260, font, "今日天气：" + weather.getTodayState(), 40, vertexBufferObjectManager);
+		todayState = new Text(50, 280, font, "今日天气：" + weather.getTodayState(), 40, vertexBufferObjectManager);
 		scene.attachChild(todayState);
 
 		ptime = new Text(50, 310, font, "更新时间：" + weather.getPtime(), 40, vertexBufferObjectManager);
 		scene.attachChild(ptime);
 
-		date = new Text(50, 390, font, "" + weather.getStrDate(), 40, vertexBufferObjectManager);
-		scene.attachChild(date);
-
-		lunar = new Text(50, 430, font, "" + weather.getLunarDate(), 40, vertexBufferObjectManager);
-		scene.attachChild(lunar);
 
 	}
 
@@ -59,8 +54,6 @@ public class HomePage {
 				todayTemp.registerEntityModifier(new MoveOutModifier(4));
 				todayState.registerEntityModifier(new MoveOutModifier(5));
 				ptime.registerEntityModifier(new MoveOutModifier(6));
-				date.registerEntityModifier(new MoveOutModifier(7));
-				lunar.registerEntityModifier(new MoveOutModifier(8));
 			}
 		});
 	}
@@ -77,8 +70,6 @@ public class HomePage {
 				todayTemp.registerEntityModifier(new MoveInModifier(4));
 				todayState.registerEntityModifier(new MoveInModifier(5));
 				ptime.registerEntityModifier(new MoveInModifier(6));
-				date.registerEntityModifier(new MoveInModifier(7));
-				lunar.registerEntityModifier(new MoveInModifier(8));
 				update(weather);
 			}
 		});
@@ -92,8 +83,6 @@ public class HomePage {
 		todayTemp.setText("今日温度：" + weather.getTodayTemp());
 		todayState.setText("今日天气：" + weather.getTodayState());
 		ptime.setText("更新时间：" + weather.getPtime());
-		date.setText("" + weather.getStrDate());
-		lunar.setText("" + weather.getLunarDate());
 	}
 
 }

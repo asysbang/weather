@@ -14,6 +14,8 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
@@ -43,7 +45,8 @@ public class MainScene extends Scene implements OnClickListener {
 	private static final int PAGE_WEEK = 1;
 	private static final int PAGE_LIFE = 2;
 	private static final int PAGE_AD = 3;
-	private static final int PAGE_UPDATE = 4;
+	private static final int PAGE_SETTING = 4;
+
 	private int curPage = PAGE_HOME;
 
 	private HomePage mHomePage;
@@ -52,11 +55,14 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private WeekPage mWeekPage;
 
+	private AdPage mAdPage;
+
 	public MainScene(BaseGameActivity activity) {
 		mActivity = activity;
 		mHomePage = new HomePage();
 		mLifePage = new LifePage();
 		mWeekPage = new WeekPage();
+		mAdPage = new AdPage();
 	}
 
 	private Font mFont;
@@ -73,6 +79,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private ITextureRegion tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion, tabUpdatePressedRegion, tabWeekNormalRegion,
 			tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion;
+
+	private Text appName, strDate, lunarDate;
 
 	public void loadResources() {
 		mHomePage.loadResources();
@@ -129,6 +137,8 @@ public class MainScene extends Scene implements OnClickListener {
 	public void update() {
 		loadSkInfoFile();
 		loadDataInfoFile();
+		strDate.setText("" + mWeatherInfo.getStrDate());
+		lunarDate.setText("" + mWeatherInfo.getLunarDate());
 		switchToPage(curPage, true);
 
 	}
@@ -248,9 +258,19 @@ public class MainScene extends Scene implements OnClickListener {
 		attachChild(tab3);
 		attachChild(tab4);
 
+		appName = new Text(20, 20, mFont, "aSys天气", mActivity.getVertexBufferObjectManager());
+		attachChild(appName);
+
+		strDate = new Text(120, 10, mFont, "" + mWeatherInfo.getStrDate(), 40, mActivity.getVertexBufferObjectManager());
+		attachChild(strDate);
+
+		lunarDate = new Text(120, 30, mFont, "" + mWeatherInfo.getLunarDate(), 40, mActivity.getVertexBufferObjectManager());
+		attachChild(lunarDate);
+
 		mHomePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
 		mLifePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
 		mWeekPage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
+		mAdPage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager());
 
 		// register touch areas
 		tab.setOnClickListener(this);
@@ -281,6 +301,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 			break;
 		case PAGE_AD:
+			mAdPage.hide(mActivity);
 
 			break;
 		}
@@ -290,7 +311,7 @@ public class MainScene extends Scene implements OnClickListener {
 		if (!selfToSelf && curPage == tagPage) {
 			return;
 		}
-		if (tagPage != PAGE_UPDATE) {
+		if (tagPage != PAGE_SETTING) {
 			hideCurPage();
 		}
 		switch (tagPage) {
@@ -308,9 +329,11 @@ public class MainScene extends Scene implements OnClickListener {
 			curPage = PAGE_LIFE;
 			break;
 		case PAGE_AD:
+			mAdPage.show(mActivity, mWeatherInfo);
+			curPage = PAGE_AD;
 
 			break;
-		case PAGE_UPDATE:
+		case PAGE_SETTING:
 			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
 			break;
 		}
@@ -329,7 +352,7 @@ public class MainScene extends Scene implements OnClickListener {
 		} else if (btnSprite == tab3) {
 			tagPage = PAGE_AD;
 		} else if (btnSprite == tab4) {
-			tagPage = PAGE_UPDATE;
+			tagPage = PAGE_SETTING;
 		}
 		switchToPage(tagPage, false);
 
