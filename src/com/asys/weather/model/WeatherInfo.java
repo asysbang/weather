@@ -9,6 +9,18 @@ public class WeatherInfo {
 	private String mDampness;
 	
 	private String mPtime;
+	
+	
+	private String todayTemp;
+	
+
+	public String getTodayTemp() {
+		return todayTemp;
+	}
+
+	public void setTodayTemp(String todayTemp) {
+		this.todayTemp = todayTemp;
+	}
 
 	public WeatherInfo(String temp, String wind, String dampness,String ptime) {
 		mTemp = temp;

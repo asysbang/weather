@@ -6,13 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.andengine.entity.scene.IOnAreaTouchListener;
-import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
+import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
@@ -34,7 +32,7 @@ import android.graphics.Color;
 import com.asys.weather.model.WeatherInfo;
 import com.asys.weather.util.Config;
 
-public class MainScene extends Scene implements IOnAreaTouchListener {
+public class MainScene extends Scene implements OnClickListener {
 
 	private BaseGameActivity mActivity;
 
@@ -44,26 +42,26 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 
 	private Font mFont;
 
-	private BitmapTextureAtlas mRefreshAtlas,  tabBgAtlas, contentBgAtlas;
+	private BitmapTextureAtlas mRefreshAtlas, tabBgAtlas, contentBgAtlas;
 
-	private TextureRegion mRefreshRegion, tabBgRegion, contentBgRegion;
+	private TextureRegion  tabBgRegion, contentBgRegion;
 
-	private Sprite mRefresh,  tabBg, contentBg;
+	private Sprite tabBg, contentBg;
 
-	private ButtonSprite tab, tab1, tab2, tab3, tab4 ;
+	private ButtonSprite tab, tab1, tab2, tab3, tab4;
 
-	private Text temp, wind, dampness, ptime;
-	
+	private Text temp, wind, dampness, ptime, todayTemp;
+
 	private BuildableBitmapTextureAtlas dockBarAtlsa;
-	
-	private ITextureRegion dockBarNormalRegion,dockBarPressedRegion;
+
+	private ITextureRegion dockBarNormalRegion, dockBarPressedRegion;
 
 	public void loadResources() {
-		
-		//!!!!!     sample use BuildableBitmapTextureAtlas  not BitmapTextureAtlas    !!!!!
+
+		// !!!!! sample use BuildableBitmapTextureAtlas not BitmapTextureAtlas
+		// !!!!!
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("img/");
 		mRefreshAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		mRefreshRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mRefreshAtlas, mActivity, "refresh.png", 0, 0);
 		mRefreshAtlas.load();
 
 		tabBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
@@ -71,9 +69,10 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 		tabBgAtlas.load();
 
 		contentBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
+		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0,
+				0);
 		contentBgAtlas.load();
-		
+
 		dockBarAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 128, 128);
 		dockBarNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_nromal.png");
 		dockBarPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_pressed.png");
@@ -89,12 +88,10 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 
 		FontFactory.setAssetBasePath("fonts/");
 
-		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 24,
-				true, Color.DKGRAY);
+		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(),
+				"weather.ttf", 24, true, Color.DKGRAY);
 		mFont.load();
 
-		
-		
 		loadSkInfoFile();
 		loadDataInfoFile();
 
@@ -102,9 +99,11 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 
 	public void update() {
 		loadSkInfoFile();
-		temp.setText("温度：" + mWeatherInfo.getTemp() + " ℃");
+		loadDataInfoFile();
+		temp.setText("当前温度：" + mWeatherInfo.getTemp() + " ℃");
 		wind.setText("风向：" + mWeatherInfo.getWind());
 		dampness.setText("湿度：" + mWeatherInfo.getDampness());
+		todayTemp.setText("今日温度：" + mWeatherInfo.getTodayTemp());
 		ptime.setText("更新时间：" + mWeatherInfo.getPtime());
 	}
 
@@ -126,7 +125,12 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 	}
 
 	private void addDataInfo(String dataInfo) {
-
+		try {
+			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
+			mWeatherInfo.setTodayTemp(info.getString("temp1"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private WeatherInfo mWeatherInfo = new WeatherInfo("xxx", "xxx", "xxx", "xxx");
@@ -154,8 +158,8 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 	private WeatherInfo parserSkInfoFile(String jsonStr) {
 		try {
 			JSONObject info = new JSONObject(jsonStr).getJSONObject("weatherinfo");
-			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"), info.getString("SD"),
-					info.getString("time"));
+			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"),
+					info.getString("SD"), info.getString("time"));
 			return res;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -164,20 +168,12 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 	}
 
 	public void loadScene() {
-		tab = new ButtonSprite(10, 470, dockBarNormalRegion,dockBarPressedRegion, mActivity.getVertexBufferObjectManager()){
+		tab = new ButtonSprite(10, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab1 = new ButtonSprite(70, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab2 = new ButtonSprite(130, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab3 = new ButtonSprite(190, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab4 = new ButtonSprite(250, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
 
-			@Override
-			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				System.out.println("====aaaaaaaaaaaa============="+tab);
-				return true;
-			}
-			
-		};
-		tab1 = new ButtonSprite(70, 470, dockBarNormalRegion,dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab2 = new ButtonSprite(130, 470, dockBarNormalRegion,dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab3 = new ButtonSprite(190, 470, dockBarNormalRegion,dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab4 = new ButtonSprite(250, 470, dockBarNormalRegion,dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		
 		tabBg = new Sprite(0, 460, tabBgRegion, mActivity.getVertexBufferObjectManager());
 		contentBg = new Sprite(0, 0, contentBgRegion, mActivity.getVertexBufferObjectManager());
 
@@ -189,37 +185,42 @@ public class MainScene extends Scene implements IOnAreaTouchListener {
 		attachChild(tab3);
 		attachChild(tab4);
 
-		temp = new Text(40, 30, mFont, "温度：" + mWeatherInfo.getTemp() + " ℃", 40, mActivity.getVertexBufferObjectManager());
+		temp = new Text(40, 30, mFont, "当前温度：" + mWeatherInfo.getTemp() + " ℃", 40, mActivity.getVertexBufferObjectManager());
 		attachChild(temp);
 		wind = new Text(40, 70, mFont, "风向：" + mWeatherInfo.getWind(), 40, mActivity.getVertexBufferObjectManager());
 		attachChild(wind);
 		dampness = new Text(40, 110, mFont, "湿度：" + mWeatherInfo.getDampness(), 40, mActivity.getVertexBufferObjectManager());
 		attachChild(dampness);
-		ptime = new Text(40, 150, mFont, "更新时间：" + mWeatherInfo.getPtime(), 40, mActivity.getVertexBufferObjectManager());
+		todayTemp = new Text(40, 150, mFont, "今日温度：" + mWeatherInfo.getTodayTemp(), 40, mActivity.getVertexBufferObjectManager());
+		attachChild(todayTemp);
+		ptime = new Text(40, 210, mFont, "更新时间：" + mWeatherInfo.getPtime(), 40, mActivity.getVertexBufferObjectManager());
 		attachChild(ptime);
 
-		mRefresh = new Sprite(100, 300, mRefreshRegion, mActivity.getVertexBufferObjectManager());
-		attachChild(mRefresh);
-		
-		//register touch areas
-		registerTouchArea(mRefresh);
+		// register touch areas
+		tab.setOnClickListener(this);
 		registerTouchArea(tab);
+
+		tab1.setOnClickListener(this);
 		registerTouchArea(tab1);
+
+		tab2.setOnClickListener(this);
 		registerTouchArea(tab2);
+		tab3.setOnClickListener(this);
 		registerTouchArea(tab3);
+		tab4.setOnClickListener(this);
 		registerTouchArea(tab4);
-		setOnAreaTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 
 	}
 
 	@Override
-	public boolean onAreaTouched(TouchEvent event, ITouchArea area, float arg2, float arg3) {
-		System.out.println("====================="+area);
-		if (TouchEvent.ACTION_UP == event.getAction()){
+	public void onClick(ButtonSprite btnSprite, float arg1, float arg2) {
+		// TODO Auto-generated method stub
+		System.out.println("=============aaaaaaa=====" + btnSprite);
+		if (btnSprite == tab4) {
 			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
 		}
-		return false;
+
 	}
 
 }
