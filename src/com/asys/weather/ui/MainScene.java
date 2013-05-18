@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.andengine.entity.modifier.MoveModifier;
-import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
@@ -52,7 +51,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private ButtonSprite tab, tab1, tab2, tab3, tab4;
 
-	private Text temp, wind, dampness, todayTemp, ptime;
+	private Text temp, wind, dampness, todayTemp, todayState, ptime;
 
 	private BuildableBitmapTextureAtlas dockBarAtlsa;
 
@@ -105,6 +104,7 @@ public class MainScene extends Scene implements OnClickListener {
 		wind.setText("风向：" + mWeatherInfo.getWind());
 		dampness.setText("湿度：" + mWeatherInfo.getDampness());
 		todayTemp.setText("今日温度：" + mWeatherInfo.getTodayTemp());
+		todayState.setText("今日天气：" + mWeatherInfo.getTodayState());
 		ptime.setText("更新时间：" + mWeatherInfo.getPtime());
 		mActivity.runOnUpdateThread(new Runnable() {
 			@Override
@@ -113,6 +113,7 @@ public class MainScene extends Scene implements OnClickListener {
 				wind.registerEntityModifier(new MoveModifier(1, -wind.getWidth(), 40, wind.getY(), wind.getY()));
 				dampness.registerEntityModifier(new MoveModifier(1.2f, -dampness.getWidth(), 40, dampness.getY(), dampness.getY()));
 				todayTemp.registerEntityModifier(new MoveModifier(1.4f, -todayTemp.getWidth(), 40, todayTemp.getY(), todayTemp.getY()));
+				todayState.registerEntityModifier(new MoveModifier(1.4f, -todayState.getWidth(), 40, todayState.getY(), todayState.getY()));
 				ptime.registerEntityModifier(new MoveModifier(1.6f, -ptime.getWidth(), 40, ptime.getY(), ptime.getY()));
 			}
 		});
@@ -139,6 +140,7 @@ public class MainScene extends Scene implements OnClickListener {
 		try {
 			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
+			mWeatherInfo.setTodayState(info.getString("img_title_single"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -204,7 +206,9 @@ public class MainScene extends Scene implements OnClickListener {
 		attachChild(dampness);
 		todayTemp = new Text(40, 150, mFont, "今日温度：" + mWeatherInfo.getTodayTemp(), 40, mActivity.getVertexBufferObjectManager());
 		attachChild(todayTemp);
-		ptime = new Text(40, 210, mFont, "更新时间：" + mWeatherInfo.getPtime(), 40, mActivity.getVertexBufferObjectManager());
+		todayState = new Text(40, 190, mFont, "今日天气：" + mWeatherInfo.getTodayState(), 40, mActivity.getVertexBufferObjectManager());
+		attachChild(todayState);
+		ptime = new Text(40, 250, mFont, "更新时间：" + mWeatherInfo.getPtime(), 40, mActivity.getVertexBufferObjectManager());
 		attachChild(ptime);
 
 		// register touch areas
@@ -242,6 +246,8 @@ public class MainScene extends Scene implements OnClickListener {
 							.getY()));
 					todayTemp.registerEntityModifier(new MoveModifier(1.4f, todayTemp.getX(), -todayTemp.getWidth(), todayTemp.getY(),
 							todayTemp.getY()));
+					todayState.registerEntityModifier(new MoveModifier(1.4f, todayState.getX(), -todayState.getWidth(), todayState.getY(),
+							todayState.getY()));
 					ptime.registerEntityModifier(new MoveModifier(1.6f, ptime.getX(), -ptime.getWidth(), ptime.getY(), ptime.getY()));
 				}
 			});

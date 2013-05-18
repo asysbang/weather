@@ -27,7 +27,7 @@
             android:name=".service.DataService"
             android:exported="FALSE" />
 
-        <activity
+<!--         <activity
             android:name=".test.MenuExample"
             android:screenOrientation="portrait" android:label="@string/test" >
             <intent-filter>
@@ -35,7 +35,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> -->
     </application>
 
 </manifest>

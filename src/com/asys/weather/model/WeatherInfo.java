@@ -13,6 +13,16 @@ public class WeatherInfo {
 	
 	private String todayTemp;
 	
+	private String todayState;
+	
+
+	public String getTodayState() {
+		return todayState;
+	}
+
+	public void setTodayState(String todayState) {
+		this.todayState = todayState;
+	}
 
 	public String getTodayTemp() {
 		return todayTemp;
