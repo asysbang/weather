@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
@@ -44,13 +46,13 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private BitmapTextureAtlas mRefreshAtlas, tabBgAtlas, contentBgAtlas;
 
-	private TextureRegion  tabBgRegion, contentBgRegion;
+	private TextureRegion tabBgRegion, contentBgRegion;
 
 	private Sprite tabBg, contentBg;
 
 	private ButtonSprite tab, tab1, tab2, tab3, tab4;
 
-	private Text temp, wind, dampness, ptime, todayTemp;
+	private Text temp, wind, dampness, todayTemp, ptime;
 
 	private BuildableBitmapTextureAtlas dockBarAtlsa;
 
@@ -69,8 +71,7 @@ public class MainScene extends Scene implements OnClickListener {
 		tabBgAtlas.load();
 
 		contentBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0,
-				0);
+		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
 		contentBgAtlas.load();
 
 		dockBarAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 128, 128);
@@ -88,8 +89,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 		FontFactory.setAssetBasePath("fonts/");
 
-		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(),
-				"weather.ttf", 24, true, Color.DKGRAY);
+		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 24,
+				true, Color.DKGRAY);
 		mFont.load();
 
 		loadSkInfoFile();
@@ -105,6 +106,16 @@ public class MainScene extends Scene implements OnClickListener {
 		dampness.setText("湿度：" + mWeatherInfo.getDampness());
 		todayTemp.setText("今日温度：" + mWeatherInfo.getTodayTemp());
 		ptime.setText("更新时间：" + mWeatherInfo.getPtime());
+		mActivity.runOnUpdateThread(new Runnable() {
+			@Override
+			public void run() {
+				temp.registerEntityModifier(new MoveModifier(0.8f, -temp.getWidth(), 40, temp.getY(), temp.getY()));
+				wind.registerEntityModifier(new MoveModifier(1, -wind.getWidth(), 40, wind.getY(), wind.getY()));
+				dampness.registerEntityModifier(new MoveModifier(1.2f, -dampness.getWidth(), 40, dampness.getY(), dampness.getY()));
+				todayTemp.registerEntityModifier(new MoveModifier(1.4f, -todayTemp.getWidth(), 40, todayTemp.getY(), todayTemp.getY()));
+				ptime.registerEntityModifier(new MoveModifier(1.6f, -ptime.getWidth(), 40, ptime.getY(), ptime.getY()));
+			}
+		});
 	}
 
 	private void loadDataInfoFile() {
@@ -118,7 +129,7 @@ public class MainScene extends Scene implements OnClickListener {
 				System.out.println("=====line==" + line);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			// ignore first start file not exist
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -133,7 +144,7 @@ public class MainScene extends Scene implements OnClickListener {
 		}
 	}
 
-	private WeatherInfo mWeatherInfo = new WeatherInfo("xxx", "xxx", "xxx", "xxx");
+	private WeatherInfo mWeatherInfo = new WeatherInfo("", "", "", "");
 
 	private void loadSkInfoFile() {
 		File info = mActivity.getFileStreamPath(Config.FILE_SK_INFO);
@@ -149,7 +160,7 @@ public class MainScene extends Scene implements OnClickListener {
 				System.out.println("=====111111111111111line==" + line);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			// ignore first start file not exist
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -158,8 +169,8 @@ public class MainScene extends Scene implements OnClickListener {
 	private WeatherInfo parserSkInfoFile(String jsonStr) {
 		try {
 			JSONObject info = new JSONObject(jsonStr).getJSONObject("weatherinfo");
-			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"),
-					info.getString("SD"), info.getString("time"));
+			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"), info.getString("SD"),
+					info.getString("time"));
 			return res;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -215,10 +226,25 @@ public class MainScene extends Scene implements OnClickListener {
 
 	@Override
 	public void onClick(ButtonSprite btnSprite, float arg1, float arg2) {
-		// TODO Auto-generated method stub
-		System.out.println("=============aaaaaaa=====" + btnSprite);
 		if (btnSprite == tab4) {
 			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
+			// should animation
+
+		} else {
+			// should animation
+			// temp.setVisible(false);
+			mActivity.runOnUpdateThread(new Runnable() {
+				@Override
+				public void run() {
+					temp.registerEntityModifier(new MoveModifier(0.8f, temp.getX(), -temp.getWidth(), temp.getY(), temp.getY()));
+					wind.registerEntityModifier(new MoveModifier(1, wind.getX(), -wind.getWidth(), wind.getY(), wind.getY()));
+					dampness.registerEntityModifier(new MoveModifier(1.2f, dampness.getX(), -dampness.getWidth(), dampness.getY(), dampness
+							.getY()));
+					todayTemp.registerEntityModifier(new MoveModifier(1.4f, todayTemp.getX(), -todayTemp.getWidth(), todayTemp.getY(),
+							todayTemp.getY()));
+					ptime.registerEntityModifier(new MoveModifier(1.6f, ptime.getX(), -ptime.getWidth(), ptime.getY(), ptime.getY()));
+				}
+			});
 		}
 
 	}
