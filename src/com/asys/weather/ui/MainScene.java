@@ -73,7 +73,7 @@ public class MainScene extends Scene implements OnClickListener {
 		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
 		contentBgAtlas.load();
 
-		dockBarAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 128, 128);
+		dockBarAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 256, 256);
 		dockBarNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_nromal.png");
 		dockBarPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_pressed.png");
 		try {
@@ -109,12 +109,12 @@ public class MainScene extends Scene implements OnClickListener {
 		mActivity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				temp.registerEntityModifier(new MoveModifier(0.8f, -temp.getWidth(), 40, temp.getY(), temp.getY()));
-				wind.registerEntityModifier(new MoveModifier(1, -wind.getWidth(), 40, wind.getY(), wind.getY()));
-				dampness.registerEntityModifier(new MoveModifier(1.2f, -dampness.getWidth(), 40, dampness.getY(), dampness.getY()));
-				todayTemp.registerEntityModifier(new MoveModifier(1.4f, -todayTemp.getWidth(), 40, todayTemp.getY(), todayTemp.getY()));
-				todayState.registerEntityModifier(new MoveModifier(1.4f, -todayState.getWidth(), 40, todayState.getY(), todayState.getY()));
-				ptime.registerEntityModifier(new MoveModifier(1.6f, -ptime.getWidth(), 40, ptime.getY(), ptime.getY()));
+				temp.registerEntityModifier(new MoveModifier(0.8f, -Config.CAMERA_WIDTH, 40, temp.getY(), temp.getY()));
+				wind.registerEntityModifier(new MoveModifier(1, -Config.CAMERA_WIDTH, 40, wind.getY(), wind.getY()));
+				dampness.registerEntityModifier(new MoveModifier(1.2f, -Config.CAMERA_WIDTH, 40, dampness.getY(), dampness.getY()));
+				todayTemp.registerEntityModifier(new MoveModifier(1.4f, -Config.CAMERA_WIDTH, 40, todayTemp.getY(), todayTemp.getY()));
+				todayState.registerEntityModifier(new MoveModifier(1.4f, -Config.CAMERA_WIDTH, 40, todayState.getY(), todayState.getY()));
+				ptime.registerEntityModifier(new MoveModifier(1.6f, -Config.CAMERA_WIDTH, 40, ptime.getY(), ptime.getY()));
 			}
 		});
 	}
@@ -127,7 +127,6 @@ public class MainScene extends Scene implements OnClickListener {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				addDataInfo(line);
-				System.out.println("=====line==" + line);
 			}
 		} catch (FileNotFoundException e) {
 			// ignore first start file not exist
@@ -140,7 +139,7 @@ public class MainScene extends Scene implements OnClickListener {
 		try {
 			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
-			mWeatherInfo.setTodayState(info.getString("img_title_single"));
+			mWeatherInfo.setTodayState(info.getString("img_title1"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -156,10 +155,6 @@ public class MainScene extends Scene implements OnClickListener {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				mWeatherInfo = parserSkInfoFile(line);
-				System.out.println("" + mWeatherInfo.getTemp());
-				System.out.println("" + mWeatherInfo.getWind());
-				System.out.println("" + mWeatherInfo.getDampness());
-				System.out.println("=====111111111111111line==" + line);
 			}
 		} catch (FileNotFoundException e) {
 			// ignore first start file not exist
@@ -181,11 +176,13 @@ public class MainScene extends Scene implements OnClickListener {
 	}
 
 	public void loadScene() {
-		tab = new ButtonSprite(10, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab1 = new ButtonSprite(70, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab2 = new ButtonSprite(130, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab3 = new ButtonSprite(190, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
-		tab4 = new ButtonSprite(250, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		float tabLeft = 10;
+		float tabWidth = dockBarNormalRegion.getWidth();
+		tab = new ButtonSprite(tabLeft, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab1 = new ButtonSprite(tabLeft + tabWidth, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab2 = new ButtonSprite(tabLeft + tabWidth * 2, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab3 = new ButtonSprite(tabLeft + tabWidth * 3, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
+		tab4 = new ButtonSprite(tabLeft + tabWidth * 4, 470, dockBarNormalRegion, dockBarPressedRegion, mActivity.getVertexBufferObjectManager());
 
 		tabBg = new Sprite(0, 460, tabBgRegion, mActivity.getVertexBufferObjectManager());
 		contentBg = new Sprite(0, 0, contentBgRegion, mActivity.getVertexBufferObjectManager());
@@ -240,15 +237,15 @@ public class MainScene extends Scene implements OnClickListener {
 			mActivity.runOnUpdateThread(new Runnable() {
 				@Override
 				public void run() {
-					temp.registerEntityModifier(new MoveModifier(0.8f, temp.getX(), -temp.getWidth(), temp.getY(), temp.getY()));
-					wind.registerEntityModifier(new MoveModifier(1, wind.getX(), -wind.getWidth(), wind.getY(), wind.getY()));
-					dampness.registerEntityModifier(new MoveModifier(1.2f, dampness.getX(), -dampness.getWidth(), dampness.getY(), dampness
+					temp.registerEntityModifier(new MoveModifier(0.8f, temp.getX(), -Config.CAMERA_WIDTH, temp.getY(), temp.getY()));
+					wind.registerEntityModifier(new MoveModifier(1, wind.getX(), -Config.CAMERA_WIDTH, wind.getY(), wind.getY()));
+					dampness.registerEntityModifier(new MoveModifier(1.2f, dampness.getX(), -Config.CAMERA_WIDTH, dampness.getY(), dampness
 							.getY()));
-					todayTemp.registerEntityModifier(new MoveModifier(1.4f, todayTemp.getX(), -todayTemp.getWidth(), todayTemp.getY(),
+					todayTemp.registerEntityModifier(new MoveModifier(1.4f, todayTemp.getX(), -Config.CAMERA_WIDTH, todayTemp.getY(),
 							todayTemp.getY()));
-					todayState.registerEntityModifier(new MoveModifier(1.4f, todayState.getX(), -todayState.getWidth(), todayState.getY(),
+					todayState.registerEntityModifier(new MoveModifier(1.4f, todayState.getX(), -Config.CAMERA_WIDTH, todayState.getY(),
 							todayState.getY()));
-					ptime.registerEntityModifier(new MoveModifier(1.6f, ptime.getX(), -ptime.getWidth(), ptime.getY(), ptime.getY()));
+					ptime.registerEntityModifier(new MoveModifier(1.6f, ptime.getX(), -Config.CAMERA_WIDTH, ptime.getY(), ptime.getY()));
 				}
 			});
 		}
