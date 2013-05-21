@@ -6,12 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.entity.text.Text;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
@@ -37,8 +35,13 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private BaseGameActivity mActivity;
 
+	private int curPage = 0;
+	
+	private HomePage mHomePage;
+
 	public MainScene(BaseGameActivity activity) {
 		mActivity = activity;
+		mHomePage = new HomePage();
 	}
 
 	private Font mFont;
@@ -51,15 +54,16 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private ButtonSprite tab, tab1, tab2, tab3, tab4;
 
-	private Text temp, wind, dampness, todayTemp, todayState, ptime;
 
-	private BuildableBitmapTextureAtlas dockBarAtlsa;
 
-	private ITextureRegion dockBarNormalRegion, dockBarPressedRegion, tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion,
-			tabUpdatePressedRegion, tabWeekNormalRegion, tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion,
-			tabAdNormalRegion, tabAdPressedRegion;
+	private BuildableBitmapTextureAtlas tabAtlsa;
+
+	private ITextureRegion   tabHomeNormalRegion, tabHomePressedRegion,
+			tabUpdateNormalRegion, tabUpdatePressedRegion, tabWeekNormalRegion, tabWeekPressedRegion, tabLifeNormalRegion,
+			tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion;
 
 	public void loadResources() {
+		mHomePage.loadResources();
 
 		// !!!!! sample use BuildableBitmapTextureAtlas not BitmapTextureAtlas
 		// !!!!!
@@ -72,30 +76,38 @@ public class MainScene extends Scene implements OnClickListener {
 		tabBgAtlas.load();
 
 		contentBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
+		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0,
+				0);
 		contentBgAtlas.load();
 
-		dockBarAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 256, 256);
-		dockBarNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_nromal.png");
-		dockBarPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_pressed.png");
+		tabAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 256, 256);
 
-		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_update_nromal.png");
-		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_update_pressed.png");
+		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_update_nromal.png");
+		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_update_pressed.png");
 
-		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_home_nromal.png");
-		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_home_pressed.png");
-		
-		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_week_nromal.png");
-		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_week_pressed.png");
-		
-		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_life_nromal.png");
-		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_life_pressed.png");
-		
-		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_ad_nromal.png");
-		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(dockBarAtlsa, mActivity, "tab_ad_pressed.png");
+		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_home_nromal.png");
+		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_home_pressed.png");
+
+		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_week_nromal.png");
+		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_week_pressed.png");
+
+		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_life_nromal.png");
+		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
+				"tab_life_pressed.png");
+
+		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_nromal.png");
+		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(tabAtlsa, mActivity, "tab_ad_pressed.png");
 		try {
-			dockBarAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
-			dockBarAtlsa.load();
+			tabAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			tabAtlsa.load();
 		} catch (TextureAtlasBuilderException e) {
 			e.printStackTrace();
 		}
@@ -105,8 +117,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 		FontFactory.setAssetBasePath("fonts/");
 
-		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 24,
-				true, Color.DKGRAY);
+		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(),
+				"weather.ttf", 22, true, Color.DKGRAY);
 		mFont.load();
 
 		loadSkInfoFile();
@@ -117,23 +129,9 @@ public class MainScene extends Scene implements OnClickListener {
 	public void update() {
 		loadSkInfoFile();
 		loadDataInfoFile();
-		temp.setText("当前温度：" + mWeatherInfo.getTemp() + " ℃");
-		wind.setText("风向：" + mWeatherInfo.getWind());
-		dampness.setText("湿度：" + mWeatherInfo.getDampness());
-		todayTemp.setText("今日温度：" + mWeatherInfo.getTodayTemp());
-		todayState.setText("当前天气：" + mWeatherInfo.getTodayState());
-		ptime.setText("更新时间：" + mWeatherInfo.getPtime());
-		mActivity.runOnUpdateThread(new Runnable() {
-			@Override
-			public void run() {
-				temp.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, temp.getY(), temp.getY()));
-				wind.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, wind.getY(), wind.getY()));
-				dampness.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, dampness.getY(), dampness.getY()));
-				todayTemp.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, todayTemp.getY(), todayTemp.getY()));
-				todayState.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, todayState.getY(), todayState.getY()));
-				ptime.registerEntityModifier(new MoveModifier(0.4f, -Config.CAMERA_WIDTH, 40, ptime.getY(), ptime.getY()));
-			}
-		});
+		mHomePage.update(mWeatherInfo);
+		mHomePage.show(mActivity);
+		
 	}
 
 	private void loadDataInfoFile() {
@@ -156,7 +154,8 @@ public class MainScene extends Scene implements OnClickListener {
 		try {
 			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
-			mWeatherInfo.setTodayState(info.getString("img_title1"));
+			mWeatherInfo.setCurState(info.getString("img_title1"));
+			mWeatherInfo.setTodayState(info.getString("weather1"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -183,8 +182,8 @@ public class MainScene extends Scene implements OnClickListener {
 	private WeatherInfo parserSkInfoFile(String jsonStr) {
 		try {
 			JSONObject info = new JSONObject(jsonStr).getJSONObject("weatherinfo");
-			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"), info.getString("SD"),
-					info.getString("time"));
+			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"),
+					info.getString("SD"), info.getString("time"));
 			return res;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -194,7 +193,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 	public void loadScene() {
 		float tabLeft = 10;
-		float tabWidth = dockBarNormalRegion.getWidth();
+		float tabWidth = tabHomeNormalRegion.getWidth();
 		tab = new ButtonSprite(tabLeft, 470, tabHomeNormalRegion, tabHomePressedRegion, mActivity.getVertexBufferObjectManager());
 		tab1 = new ButtonSprite(tabLeft + tabWidth, 470, tabWeekNormalRegion, tabWeekPressedRegion,
 				mActivity.getVertexBufferObjectManager());
@@ -216,18 +215,7 @@ public class MainScene extends Scene implements OnClickListener {
 		attachChild(tab3);
 		attachChild(tab4);
 
-		temp = new Text(40, 30, mFont, "当前温度：" + mWeatherInfo.getTemp() + " ℃", 40, mActivity.getVertexBufferObjectManager());
-		attachChild(temp);
-		wind = new Text(40, 70, mFont, "风向：" + mWeatherInfo.getWind(), 40, mActivity.getVertexBufferObjectManager());
-		attachChild(wind);
-		dampness = new Text(40, 110, mFont, "湿度：" + mWeatherInfo.getDampness(), 40, mActivity.getVertexBufferObjectManager());
-		attachChild(dampness);
-		todayTemp = new Text(40, 150, mFont, "今日温度：" + mWeatherInfo.getTodayTemp(), 40, mActivity.getVertexBufferObjectManager());
-		attachChild(todayTemp);
-		todayState = new Text(40, 190, mFont, "当前天气：" + mWeatherInfo.getTodayState(), 40, mActivity.getVertexBufferObjectManager());
-		attachChild(todayState);
-		ptime = new Text(40, 250, mFont, "更新时间：" + mWeatherInfo.getPtime(), 40, mActivity.getVertexBufferObjectManager());
-		attachChild(ptime);
+		mHomePage.loadScene(this,mFont,mActivity.getVertexBufferObjectManager(),mWeatherInfo);
 
 		// register touch areas
 		tab.setOnClickListener(this);
@@ -246,29 +234,45 @@ public class MainScene extends Scene implements OnClickListener {
 
 	}
 
+	private void switchToHomePage() {
+		if (curPage == 0){
+			return;
+		}
+
+	}
+	private void switchToWeekPage() {
+		if (curPage == 0){
+			return;
+		}
+		
+	}
+	private void switchToLifePage() {
+		
+	}
+	private void switchToAdPage() {
+		if (curPage == 0){
+			return;
+		}
+		
+	}
+	private void switchToUpdatePage() {
+		
+	}
+
 	@Override
 	public void onClick(ButtonSprite btnSprite, float arg1, float arg2) {
 		if (btnSprite == tab4) {
 			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
 			// should animation
 
+		} else if (btnSprite == tab3) {
+			update();
+		} else if (btnSprite == tab) {
+			switchToHomePage();
 		} else {
 			// should animation
 			// temp.setVisible(false);
-			mActivity.runOnUpdateThread(new Runnable() {
-				@Override
-				public void run() {
-					temp.registerEntityModifier(new MoveModifier(0.4f, temp.getX(), -Config.CAMERA_WIDTH, temp.getY(), temp.getY()));
-					wind.registerEntityModifier(new MoveModifier(0.4f, wind.getX(), -Config.CAMERA_WIDTH, wind.getY(), wind.getY()));
-					dampness.registerEntityModifier(new MoveModifier(0.4f, dampness.getX(), -Config.CAMERA_WIDTH, dampness.getY(), dampness
-							.getY()));
-					todayTemp.registerEntityModifier(new MoveModifier(0.4f, todayTemp.getX(), -Config.CAMERA_WIDTH, todayTemp.getY(),
-							todayTemp.getY()));
-					todayState.registerEntityModifier(new MoveModifier(0.4f, todayState.getX(), -Config.CAMERA_WIDTH, todayState.getY(),
-							todayState.getY()));
-					ptime.registerEntityModifier(new MoveModifier(0.4f, ptime.getX(), -Config.CAMERA_WIDTH, ptime.getY(), ptime.getY()));
-				}
-			});
+			mHomePage.hide(mActivity);
 		}
 
 	}

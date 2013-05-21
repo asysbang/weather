@@ -15,6 +15,16 @@ public class WeatherInfo {
 	
 	private String todayState;
 	
+	private String curState;
+	
+
+	public String getCurState() {
+		return curState;
+	}
+
+	public void setCurState(String curState) {
+		this.curState = curState;
+	}
 
 	public String getTodayState() {
 		return todayState;
