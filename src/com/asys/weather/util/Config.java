@@ -1,7 +1,7 @@
 package com.asys.weather.util;
 
 public class Config {
-	
+
 	public static final int CAMERA_WIDTH = 320;
 	public static final int CAMERA_HEIGHT = 534;
 
@@ -10,5 +10,7 @@ public class Config {
 
 	public static final String FILE_DATA_INFO = "data.info";
 	public static final String FILE_SK_INFO = "sk.info";
+
+	public static final float HIDE_SHOW_PAGE_ANIMATION_TIME = 0.3f;
 
 }

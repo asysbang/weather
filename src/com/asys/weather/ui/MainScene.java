@@ -35,13 +35,21 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private BaseGameActivity mActivity;
 
-	private int curPage = 0;
-	
+	private static final int PAGE_HOME = 0;
+	private static final int PAGE_WEEK = 1;
+	private static final int PAGE_LIFE = 2;
+	private static final int PAGE_AD = 3;
+	private static final int PAGE_UPDATE = 4;
+	private int curPage = PAGE_HOME;
+
 	private HomePage mHomePage;
+
+	private LifePage mLifePage;
 
 	public MainScene(BaseGameActivity activity) {
 		mActivity = activity;
 		mHomePage = new HomePage();
+		mLifePage = new LifePage();
 	}
 
 	private Font mFont;
@@ -54,13 +62,11 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private ButtonSprite tab, tab1, tab2, tab3, tab4;
 
-
-
 	private BuildableBitmapTextureAtlas tabAtlsa;
 
-	private ITextureRegion   tabHomeNormalRegion, tabHomePressedRegion,
-			tabUpdateNormalRegion, tabUpdatePressedRegion, tabWeekNormalRegion, tabWeekPressedRegion, tabLifeNormalRegion,
-			tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion;
+	private ITextureRegion tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion, tabUpdatePressedRegion,
+			tabWeekNormalRegion, tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion,
+			tabAdPressedRegion;
 
 	public void loadResources() {
 		mHomePage.loadResources();
@@ -87,24 +93,20 @@ public class MainScene extends Scene implements OnClickListener {
 		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
 				"tab_update_pressed.png");
 
-		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_home_nromal.png");
-		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_home_pressed.png");
+		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_nromal.png");
+		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(tabAtlsa, mActivity, "tab_home_pressed.png");
 
-		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_week_nromal.png");
-		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_week_pressed.png");
+		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_nromal.png");
+		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(tabAtlsa, mActivity, "tab_week_pressed.png");
 
-		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_life_nromal.png");
-		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_life_pressed.png");
+		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_nromal.png");
+		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(tabAtlsa, mActivity, "tab_life_pressed.png");
 
 		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_nromal.png");
-		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(tabAtlsa, mActivity, "tab_ad_pressed.png");
+		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_pressed.png");
 		try {
 			tabAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
 			tabAtlsa.load();
@@ -118,7 +120,7 @@ public class MainScene extends Scene implements OnClickListener {
 		FontFactory.setAssetBasePath("fonts/");
 
 		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(),
-				"weather.ttf", 22, true, Color.DKGRAY);
+				"weather.ttf", 20, true, Color.DKGRAY);
 		mFont.load();
 
 		loadSkInfoFile();
@@ -129,9 +131,8 @@ public class MainScene extends Scene implements OnClickListener {
 	public void update() {
 		loadSkInfoFile();
 		loadDataInfoFile();
-		mHomePage.update(mWeatherInfo);
-		mHomePage.show(mActivity);
-		
+		switchToPage(curPage, true);
+
 	}
 
 	private void loadDataInfoFile() {
@@ -156,6 +157,14 @@ public class MainScene extends Scene implements OnClickListener {
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
 			mWeatherInfo.setCurState(info.getString("img_title1"));
 			mWeatherInfo.setTodayState(info.getString("weather1"));
+			mWeatherInfo.setDress(info.getString("index"));
+			mWeatherInfo.setDressTip(info.getString("index_d"));
+			mWeatherInfo.setUvRays(info.getString("index_uv"));
+			mWeatherInfo.setCar(info.getString("index_xc"));
+			mWeatherInfo.setTravel(info.getString("index_tr"));
+			mWeatherInfo.setExe(info.getString("index_cl"));
+			mWeatherInfo.setSun(info.getString("index_ls"));
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -215,7 +224,8 @@ public class MainScene extends Scene implements OnClickListener {
 		attachChild(tab3);
 		attachChild(tab4);
 
-		mHomePage.loadScene(this,mFont,mActivity.getVertexBufferObjectManager(),mWeatherInfo);
+		mHomePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
+		mLifePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
 
 		// register touch areas
 		tab.setOnClickListener(this);
@@ -231,49 +241,71 @@ public class MainScene extends Scene implements OnClickListener {
 		tab4.setOnClickListener(this);
 		registerTouchArea(tab4);
 		setTouchAreaBindingOnActionDownEnabled(true);
-
 	}
 
-	private void switchToHomePage() {
-		if (curPage == 0){
+	private void hideCurPage() {
+		switch (curPage) {
+		case PAGE_HOME:
+			mHomePage.hide(mActivity);
+			break;
+		case PAGE_WEEK:
+
+			break;
+		case PAGE_LIFE:
+			mLifePage.hide(mActivity);
+
+			break;
+		case PAGE_AD:
+
+			break;
+		}
+	}
+
+	private void switchToPage(int tagPage, boolean selfToSelf) {
+		if (!selfToSelf && curPage == tagPage) {
 			return;
+		}
+		if (tagPage != PAGE_UPDATE) {
+			hideCurPage();
+		}
+		switch (tagPage) {
+		case PAGE_HOME:
+			mHomePage.show(mActivity, mWeatherInfo);
+			curPage = PAGE_HOME;
+			break;
+		case PAGE_WEEK:
+
+			break;
+		case PAGE_LIFE:
+			mLifePage.show(mActivity, mWeatherInfo);
+			curPage = PAGE_LIFE;
+			break;
+		case PAGE_AD:
+
+			break;
+		case PAGE_UPDATE:
+			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
+			break;
 		}
 
-	}
-	private void switchToWeekPage() {
-		if (curPage == 0){
-			return;
-		}
-		
-	}
-	private void switchToLifePage() {
-		
-	}
-	private void switchToAdPage() {
-		if (curPage == 0){
-			return;
-		}
-		
-	}
-	private void switchToUpdatePage() {
-		
 	}
 
 	@Override
 	public void onClick(ButtonSprite btnSprite, float arg1, float arg2) {
-		if (btnSprite == tab4) {
-			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
-			// should animation
-
+		System.out.println("==========curpage====" + curPage);
+		int tagPage = PAGE_HOME;
+		if (btnSprite == tab) {
+			// default is home page
+		} else if (btnSprite == tab1) {
+			tagPage = PAGE_WEEK;
+		} else if (btnSprite == tab2) {
+			tagPage = PAGE_LIFE;
 		} else if (btnSprite == tab3) {
-			update();
-		} else if (btnSprite == tab) {
-			switchToHomePage();
-		} else {
-			// should animation
-			// temp.setVisible(false);
-			mHomePage.hide(mActivity);
+			tagPage = PAGE_AD;
+		} else if (btnSprite == tab4) {
+			tagPage = PAGE_UPDATE;
 		}
+		switchToPage(tagPage, false);
 
 	}
 
