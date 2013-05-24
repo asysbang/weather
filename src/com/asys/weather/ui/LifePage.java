@@ -1,6 +1,5 @@
 package com.asys.weather.ui;
 
-import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.font.Font;
@@ -12,7 +11,10 @@ import com.asys.weather.util.Config;
 
 public class LifePage {
 	// index 穿衣
-	private Text dress, dressTip;
+	private Text dress ;
+	
+	// index_d穿衣提示   太长暂时不显示
+	private Text dressTip;
 
 	// index_uv 紫外线
 	private Text uvRays;
@@ -38,9 +40,9 @@ public class LifePage {
 		dress = new Text(-Config.CAMERA_WIDTH, 70, font, "穿衣指数：" + weather.getDress(), 40, vertexBufferObjectManager);
 		scene.attachChild(dress);
 
-		dressTip = new Text(-Config.CAMERA_WIDTH, 70, font, "穿衣指南：" + weather.getDressTip(), 40, vertexBufferObjectManager);
-		//too long to show
-		//scene.attachChild(dressTip);
+		// dressTip = new Text(-Config.CAMERA_WIDTH, 70, font, "穿衣指南：" +
+		// weather.getDressTip(), 40, vertexBufferObjectManager);
+		// scene.attachChild(dressTip);
 
 		uvRays = new Text(-Config.CAMERA_WIDTH, 110, font, "紫外线指数：" + weather.getUvRays(), 40, vertexBufferObjectManager);
 		scene.attachChild(uvRays);
@@ -58,55 +60,38 @@ public class LifePage {
 		scene.attachChild(sun);
 
 	}
-	
-
 
 	public void hide(BaseGameActivity activity) {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				float deta = 0.1f;
-				dress.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME, dress.getX(), -Config.CAMERA_WIDTH, dress.getY(), dress
-						.getY()));
-				dressTip.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta, dressTip.getX(), -Config.CAMERA_WIDTH, dressTip
-						.getY(), dressTip.getY()));
-				uvRays.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 2, uvRays.getX(), -Config.CAMERA_WIDTH, uvRays
-						.getY(), uvRays.getY()));
-				car.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 3, car.getX(), -Config.CAMERA_WIDTH, car.getY(), car
-						.getY()));
-				travel.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 4, travel.getX(), -Config.CAMERA_WIDTH, travel
-						.getY(), travel.getY()));
-				exe.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 5, exe.getX(), -Config.CAMERA_WIDTH, exe.getY(), exe
-						.getY()));
-				sun.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 6, sun.getX(), -Config.CAMERA_WIDTH, sun.getY(), sun
-						.getY()));
+				dress.registerEntityModifier(new MoveOutModifier(0));
+				uvRays.registerEntityModifier(new MoveOutModifier(1));
+				car.registerEntityModifier(new MoveOutModifier(2));
+				travel.registerEntityModifier(new MoveOutModifier(3));
+				exe.registerEntityModifier(new MoveOutModifier(4));
+				sun.registerEntityModifier(new MoveOutModifier(5));
 			}
 		});
 	}
 
-	public void show(BaseGameActivity activity,final WeatherInfo weather) {
+	public void show(BaseGameActivity activity, final WeatherInfo weather) {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				float deta = 0.1f;
-				dress.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME, -Config.CAMERA_WIDTH, 40, dress.getY(), dress.getY()));
-				dressTip.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta, -Config.CAMERA_WIDTH, 40, dressTip.getY(), dressTip
-						.getY()));
-				uvRays.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 2, -Config.CAMERA_WIDTH, 40, uvRays.getY(), uvRays
-						.getY()));
-				car.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 3, -Config.CAMERA_WIDTH, 40, car.getY(), car.getY()));
-				travel.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 4, -Config.CAMERA_WIDTH, 40, travel.getY(), travel
-						.getY()));
-				exe.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 5, -Config.CAMERA_WIDTH, 40, exe.getY(), exe.getY()));
-				sun.registerEntityModifier(new MoveModifier(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + deta * 6, -Config.CAMERA_WIDTH, 40, sun.getY(), sun.getY()));
+				dress.registerEntityModifier(new MoveInModifier(0));
+				uvRays.registerEntityModifier(new MoveInModifier(1));
+				car.registerEntityModifier(new MoveInModifier(2));
+				travel.registerEntityModifier(new MoveInModifier(3));
+				exe.registerEntityModifier(new MoveInModifier(4));
+				sun.registerEntityModifier(new MoveInModifier(5));
 				update(weather);
 			}
 		});
 	}
-	
+
 	private void update(WeatherInfo weather) {
 		dress.setText("穿衣指数：" + weather.getDress());
-		dressTip.setText("穿衣指南：" + weather.getDressTip());
 		uvRays.setText("紫外线指数：" + weather.getUvRays());
 		car.setText("洗车指数：" + weather.getCar());
 		travel.setText("出行指数：" + weather.getTravel());

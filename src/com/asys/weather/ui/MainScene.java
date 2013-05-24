@@ -45,11 +45,14 @@ public class MainScene extends Scene implements OnClickListener {
 	private HomePage mHomePage;
 
 	private LifePage mLifePage;
+	
+	private WeekPage mWeekPage;
 
 	public MainScene(BaseGameActivity activity) {
 		mActivity = activity;
 		mHomePage = new HomePage();
 		mLifePage = new LifePage();
+		mWeekPage = new WeekPage();
 	}
 
 	private Font mFont;
@@ -226,6 +229,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 		mHomePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
 		mLifePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
+		mWeekPage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
 
 		// register touch areas
 		tab.setOnClickListener(this);
@@ -249,7 +253,7 @@ public class MainScene extends Scene implements OnClickListener {
 			mHomePage.hide(mActivity);
 			break;
 		case PAGE_WEEK:
-
+			mWeekPage.hide(mActivity);
 			break;
 		case PAGE_LIFE:
 			mLifePage.hide(mActivity);
@@ -274,6 +278,8 @@ public class MainScene extends Scene implements OnClickListener {
 			curPage = PAGE_HOME;
 			break;
 		case PAGE_WEEK:
+			mWeekPage.show(mActivity, mWeatherInfo);
+			curPage = PAGE_WEEK;
 
 			break;
 		case PAGE_LIFE:
