@@ -172,7 +172,6 @@ public class MainScene extends Scene implements OnClickListener {
 			mWeatherInfo.setTravel(info.getString("index_tr"));
 			mWeatherInfo.setExe(info.getString("index_cl"));
 			mWeatherInfo.setSun(info.getString("index_ls"));
-
 			// set info[]
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
 			Date date = sdf.parse(info.getString("date_y"));

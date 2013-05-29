@@ -10,7 +10,7 @@ import com.asys.weather.model.WeatherInfo;
 
 public class HomePage {
 
-	private Text curTemp, wind, dampness, todayTemp, curState, todayState, ptime;
+	private Text curTemp, wind, dampness, todayTemp, curState, todayState, ptime, date, lunar;
 
 	public HomePage() {
 
@@ -40,6 +40,12 @@ public class HomePage {
 		ptime = new Text(50, 310, font, "更新时间：" + weather.getPtime(), 40, vertexBufferObjectManager);
 		scene.attachChild(ptime);
 
+		date = new Text(50, 390, font, "" + weather.getStrDate(), 40, vertexBufferObjectManager);
+		scene.attachChild(date);
+
+		lunar = new Text(50, 430, font, "" + weather.getLunarDate(), 40, vertexBufferObjectManager);
+		scene.attachChild(lunar);
+
 	}
 
 	public void hide(BaseGameActivity activity) {
@@ -53,6 +59,8 @@ public class HomePage {
 				todayTemp.registerEntityModifier(new MoveOutModifier(4));
 				todayState.registerEntityModifier(new MoveOutModifier(5));
 				ptime.registerEntityModifier(new MoveOutModifier(6));
+				date.registerEntityModifier(new MoveOutModifier(7));
+				lunar.registerEntityModifier(new MoveOutModifier(8));
 			}
 		});
 	}
@@ -69,6 +77,8 @@ public class HomePage {
 				todayTemp.registerEntityModifier(new MoveInModifier(4));
 				todayState.registerEntityModifier(new MoveInModifier(5));
 				ptime.registerEntityModifier(new MoveInModifier(6));
+				date.registerEntityModifier(new MoveInModifier(7));
+				lunar.registerEntityModifier(new MoveInModifier(8));
 				update(weather);
 			}
 		});
@@ -82,6 +92,8 @@ public class HomePage {
 		todayTemp.setText("今日温度：" + weather.getTodayTemp());
 		todayState.setText("今日天气：" + weather.getTodayState());
 		ptime.setText("更新时间：" + weather.getPtime());
+		date.setText("" + weather.getStrDate());
+		lunar.setText("" + weather.getLunarDate());
 	}
 
 }

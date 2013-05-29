@@ -1,6 +1,9 @@
 package com.asys.weather.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.asys.weather.util.LunarDate;
 
 public class WeatherInfo {
 
@@ -12,6 +15,9 @@ public class WeatherInfo {
 	private String todayTemp;
 	private String todayState;
 	private String curState;
+
+	private String strDate;
+	private String lunarDate;
 
 	private Date date;
 
@@ -131,12 +137,23 @@ public class WeatherInfo {
 		this.info = info;
 	}
 
+	public String getStrDate() {
+		return strDate;
+	}
+
+	public String getLunarDate() {
+		return lunarDate;
+	}
+
 	public Date getDate() {
 		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		strDate = sdf.format(date);
+		lunarDate = LunarDate.getLunarDate(date).toString();
 	}
 
 }

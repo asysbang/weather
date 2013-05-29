@@ -28,7 +28,7 @@ public class Weather extends SimpleBaseGameActivity {
 
 	private MainScene mScene;
 
-	private void getAllScene(){
+	private void getAllScene() {
 		mScene = new MainScene(this);
 	}
 
@@ -39,27 +39,25 @@ public class Weather extends SimpleBaseGameActivity {
 			mScene.update();
 		}
 	};
-	
-	
+
 	@Override
 	protected void onCreate(Bundle pSavedInstanceState) {
 		super.onCreate(pSavedInstanceState);
-		
+
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo("com.asys.weather", PackageManager.GET_SIGNATURES);
 			Signature[] ss = info.signatures;
-			System.out.println("======="+ss.hashCode());
-			System.out.println("======="+ss.length);
-			System.out.println("======="+ss[0].toCharsString());
-			if(ss[0].toCharsString().startsWith("308201e53082014ea00")){
+			System.out.println("=======" + ss.hashCode());
+			System.out.println("=======" + ss.length);
+			System.out.println("=======" + ss[0].toCharsString());
+			if (ss[0].toCharsString().startsWith("308201e53082014ea00")) {
 				System.out.println("=============okokokokokookokok========");
 			}
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		
-		IntentFilter filter= new IntentFilter(Config.CMD_UPDATE);
+
+		IntentFilter filter = new IntentFilter(Config.CMD_UPDATE);
 		registerReceiver(receiver, filter);
 	}
 
@@ -72,7 +70,7 @@ public class Weather extends SimpleBaseGameActivity {
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		DisplayMetrics outMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(outMetrics );
+		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
 		startService(new Intent(this, DataService.class));
 		getAllScene();
 		mCamera = new Camera(0, 0, Config.CAMERA_WIDTH, Config.CAMERA_HEIGHT);

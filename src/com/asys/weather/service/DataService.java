@@ -100,7 +100,6 @@ public class DataService extends Service {
 			while ((line = br.readLine()) != null) {
 				bw.write(line);
 			}
-
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
