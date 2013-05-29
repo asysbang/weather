@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.ButtonSprite;
@@ -45,7 +49,7 @@ public class MainScene extends Scene implements OnClickListener {
 	private HomePage mHomePage;
 
 	private LifePage mLifePage;
-	
+
 	private WeekPage mWeekPage;
 
 	public MainScene(BaseGameActivity activity) {
@@ -156,6 +160,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private void addDataInfo(String dataInfo) {
 		try {
+			System.out.println("===========----------------------------------===");
 			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
 			mWeatherInfo.setCurState(info.getString("img_title1"));
@@ -168,9 +173,36 @@ public class MainScene extends Scene implements OnClickListener {
 			mWeatherInfo.setExe(info.getString("index_cl"));
 			mWeatherInfo.setSun(info.getString("index_ls"));
 
+			// set info[]
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+			Date date = sdf.parse(info.getString("date_y"));
+
+			mWeatherInfo.setDate(date);
+
+			String[] data = new String[6];
+			for (int i = 0; i < data.length; i++) {
+				data[i] = formatData(date, i, info.getString("temp" + (i + 1)), info.getString("weather" + (i + 1)));
+			}
+			mWeatherInfo.setInfo(data);
+
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+
+	private String[] weeks = new String[] { "(周日)", "(周一)", "(周二)", "(周三)", "(周四)", "(周五)", "(周六)" };
+
+	private String formatData(Date date, int i, String string, String string2) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int j = c.get(Calendar.DAY_OF_MONTH);
+		c.set(Calendar.DAY_OF_MONTH, j + i);
+		System.out.println("==============" + c.toString());
+		int index = c.get((Calendar.DAY_OF_WEEK));
+		return c.get(Calendar.DATE) + "日" + (weeks[index-1]) + ":" + string + " : " + string2;
 	}
 
 	private WeatherInfo mWeatherInfo = new WeatherInfo("", "", "", "");
@@ -298,7 +330,6 @@ public class MainScene extends Scene implements OnClickListener {
 
 	@Override
 	public void onClick(ButtonSprite btnSprite, float arg1, float arg2) {
-		System.out.println("==========curpage====" + curPage);
 		int tagPage = PAGE_HOME;
 		if (btnSprite == tab) {
 			// default is home page

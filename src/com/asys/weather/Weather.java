@@ -11,6 +11,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
@@ -40,6 +44,21 @@ public class Weather extends SimpleBaseGameActivity {
 	@Override
 	protected void onCreate(Bundle pSavedInstanceState) {
 		super.onCreate(pSavedInstanceState);
+		
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo("com.asys.weather", PackageManager.GET_SIGNATURES);
+			Signature[] ss = info.signatures;
+			System.out.println("======="+ss.hashCode());
+			System.out.println("======="+ss.length);
+			System.out.println("======="+ss[0].toCharsString());
+			if(ss[0].toCharsString().startsWith("308201e53082014ea00")){
+				System.out.println("=============okokokokokookokok========");
+			}
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		
 		IntentFilter filter= new IntentFilter(Config.CMD_UPDATE);
 		registerReceiver(receiver, filter);
 	}

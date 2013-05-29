@@ -28,20 +28,20 @@ public class WeekPage {
 	}
 
 	public void loadScene(Scene scene, Font font, VertexBufferObjectManager vertexBufferObjectManager, WeatherInfo weather) {
-		date1 = new Text(-Config.CAMERA_WIDTH, 30, font, "今天" + weather.getTemp(), 40, vertexBufferObjectManager);
+		date1 = new Text(-Config.CAMERA_WIDTH, 30, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date1);
 
-		date2 = new Text(-Config.CAMERA_WIDTH, 70, font, "明天" + weather.getCurState(), 40, vertexBufferObjectManager);
+		date2 = new Text(-Config.CAMERA_WIDTH, 70, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date2);
 
-		date3 = new Text(-Config.CAMERA_WIDTH, 110, font, "22日" + weather.getWind(), 40, vertexBufferObjectManager);
+		date3 = new Text(-Config.CAMERA_WIDTH, 110, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date3);
-		date4 = new Text(-Config.CAMERA_WIDTH, 150, font, "23日" + weather.getDampness(), 40, vertexBufferObjectManager);
+		date4 = new Text(-Config.CAMERA_WIDTH, 150, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date4);
-		date5 = new Text(-Config.CAMERA_WIDTH, 220, font, "24日" + weather.getTodayTemp(), 40, vertexBufferObjectManager);
+		date5 = new Text(-Config.CAMERA_WIDTH, 190, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date5);
 
-		date6 = new Text(-Config.CAMERA_WIDTH, 260, font, "25日" + weather.getTodayState(), 40, vertexBufferObjectManager);
+		date6 = new Text(-Config.CAMERA_WIDTH, 230, font, "", 40, vertexBufferObjectManager);
 		scene.attachChild(date6);
 
 	}
@@ -50,12 +50,12 @@ public class WeekPage {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				date1.registerEntityModifier(new MoveOutModifier(0));
-				date2.registerEntityModifier(new MoveOutModifier(1));
-				date3.registerEntityModifier(new MoveOutModifier(2));
-				date4.registerEntityModifier(new MoveOutModifier(3));
-				date5.registerEntityModifier(new MoveOutModifier(4));
-				date6.registerEntityModifier(new MoveOutModifier(5));
+				date1.registerEntityModifier(new MoveOutModifier(0, 15));
+				date2.registerEntityModifier(new MoveOutModifier(1, 15));
+				date3.registerEntityModifier(new MoveOutModifier(2, 15));
+				date4.registerEntityModifier(new MoveOutModifier(3, 15));
+				date5.registerEntityModifier(new MoveOutModifier(4, 15));
+				date6.registerEntityModifier(new MoveOutModifier(5, 15));
 			}
 		});
 	}
@@ -65,24 +65,26 @@ public class WeekPage {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				date1.registerEntityModifier(new MoveInModifier(0));
-				date2.registerEntityModifier(new MoveInModifier(1));
-				date3.registerEntityModifier(new MoveInModifier(2));
-				date4.registerEntityModifier(new MoveInModifier(3));
-				date5.registerEntityModifier(new MoveInModifier(4));
-				date6.registerEntityModifier(new MoveInModifier(5));
+				date1.registerEntityModifier(new MoveInModifier(0, 10));
+				date2.registerEntityModifier(new MoveInModifier(1, 10));
+				date3.registerEntityModifier(new MoveInModifier(2, 10));
+				date4.registerEntityModifier(new MoveInModifier(3, 10));
+				date5.registerEntityModifier(new MoveInModifier(4, 10));
+				date6.registerEntityModifier(new MoveInModifier(5, 10));
 				update(weather);
 			}
 		});
 	}
 
 	private void update(WeatherInfo weather) {
-		date1.setText("今天：" + weather.getTemp());
-		date2.setText("明天：" + weather.getCurState());
-		date3.setText("22日：" + weather.getWind());
-		date4.setText("23日：" + weather.getDampness());
-		date5.setText("24日：" + weather.getTodayTemp());
-		date6.setText("25日：" + weather.getTodayState());
+		if (weather.getInfo() != null) {
+			date1.setText(weather.getInfo()[0]);
+			date2.setText(weather.getInfo()[1]);
+			date3.setText(weather.getInfo()[2]);
+			date4.setText(weather.getInfo()[3]);
+			date5.setText(weather.getInfo()[4]);
+			date6.setText(weather.getInfo()[5]);
+		}
 	}
 
 }

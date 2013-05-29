@@ -10,4 +10,8 @@ public class MoveInModifier extends MoveXModifier {
 		super(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + Config.HIDE_SHOW_PAGE_ANIMATION_DETA * detaNum, -Config.CAMERA_WIDTH, 50);
 	}
 
+	public MoveInModifier(int detaNum, float left) {
+		super(Config.HIDE_SHOW_PAGE_ANIMATION_TIME + Config.HIDE_SHOW_PAGE_ANIMATION_DETA * detaNum, -Config.CAMERA_WIDTH, left);
+	}
+
 }

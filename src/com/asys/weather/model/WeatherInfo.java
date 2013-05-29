@@ -1,5 +1,7 @@
 package com.asys.weather.model;
 
+import java.util.Date;
+
 public class WeatherInfo {
 
 	// for home page
@@ -10,6 +12,10 @@ public class WeatherInfo {
 	private String todayTemp;
 	private String todayState;
 	private String curState;
+
+	private Date date;
+
+	private String[] info;
 
 	// for life page
 	private String dress, dressTip, uvRays, car, travel, exe, sun;
@@ -115,6 +121,22 @@ public class WeatherInfo {
 
 	public void setSun(String sun) {
 		this.sun = sun;
+	}
+
+	public String[] getInfo() {
+		return info;
+	}
+
+	public void setInfo(String[] info) {
+		this.info = info;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

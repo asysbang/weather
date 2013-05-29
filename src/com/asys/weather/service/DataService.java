@@ -12,6 +12,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
 
 import com.asys.weather.util.Config;
 
@@ -54,21 +55,20 @@ public class DataService extends Service {
 
 	private void updateWeatherSkInfo() {
 		BufferedWriter bw = null;
-		String info = null;
 		try {
 			File fileStreamPath = getFileStreamPath(Config.FILE_SK_INFO);
 			bw = new BufferedWriter(new FileWriter(fileStreamPath));
 
 			HttpClient mClient = new DefaultHttpClient();
+			mClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, Config.HTTP_TIMEOUT);
+			mClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, Config.HTTP_TIMEOUT);
 			HttpGet request = new HttpGet("http://www.weather.com.cn/data/sk/101010100.html");
 			HttpResponse response = mClient.execute(request);
 			BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				info = line;
 				bw.write(line);
 			}
-
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -88,18 +88,16 @@ public class DataService extends Service {
 	private void updateWeatherDataInfo() {
 		BufferedWriter bw = null;
 		try {
-			String info = null;
 			File fileStreamPath = getFileStreamPath(Config.FILE_DATA_INFO);
 			bw = new BufferedWriter(new FileWriter(fileStreamPath));
-
 			HttpClient mClient = new DefaultHttpClient();
-			// http://www.weather.com.cn/data/sk/101010100.html
+			mClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, Config.HTTP_TIMEOUT);
+			mClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, Config.HTTP_TIMEOUT);
 			HttpGet request = new HttpGet("http://m.weather.com.cn/data/101010100.html");
 			HttpResponse response = mClient.execute(request);
 			BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				info = line;
 				bw.write(line);
 			}
 
@@ -128,7 +126,6 @@ public class DataService extends Service {
 	public void onCreate() {
 		IntentFilter filter = new IntentFilter(Config.CMD_QUERY);
 		registerReceiver(receiver, filter);
-
 	};
 
 	@Override
