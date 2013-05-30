@@ -61,7 +61,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private Font mFont;
 
-	private BitmapTextureAtlas mRefreshAtlas, tabBgAtlas, contentBgAtlas;
+	private BitmapTextureAtlas tabBgAtlas, contentBgAtlas;
 
 	private TextureRegion tabBgRegion, contentBgRegion;
 
@@ -71,9 +71,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private BuildableBitmapTextureAtlas tabAtlsa;
 
-	private ITextureRegion tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion, tabUpdatePressedRegion,
-			tabWeekNormalRegion, tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion,
-			tabAdPressedRegion;
+	private ITextureRegion tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion, tabUpdatePressedRegion, tabWeekNormalRegion,
+			tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion;
 
 	public void loadResources() {
 		mHomePage.loadResources();
@@ -81,41 +80,33 @@ public class MainScene extends Scene implements OnClickListener {
 		// !!!!! sample use BuildableBitmapTextureAtlas not BitmapTextureAtlas
 		// !!!!!
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("img/");
-		mRefreshAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		mRefreshAtlas.load();
 
 		tabBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		tabBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabBgAtlas, mActivity, "tab_bg.png", 0, 0);
 		tabBgAtlas.load();
 
 		contentBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0,
-				0);
+		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
 		contentBgAtlas.load();
 
-		tabAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 256, 256);
+		tabAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_update_nromal.png");
-		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity,
-				"tab_update_pressed.png");
+		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_update_nromal.png");
+		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_update_pressed.png");
 
 		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_nromal.png");
-		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(tabAtlsa, mActivity, "tab_home_pressed.png");
+		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_pressed.png");
 
 		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_nromal.png");
-		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(tabAtlsa, mActivity, "tab_week_pressed.png");
+		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_pressed.png");
 
 		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_nromal.png");
-		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(tabAtlsa, mActivity, "tab_life_pressed.png");
+		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_pressed.png");
 
 		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_nromal.png");
 		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_pressed.png");
 		try {
-			tabAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			tabAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
 			tabAtlsa.load();
 		} catch (TextureAtlasBuilderException e) {
 			e.printStackTrace();
@@ -126,8 +117,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 		FontFactory.setAssetBasePath("fonts/");
 
-		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(),
-				"weather.ttf", 20, true, Color.DKGRAY);
+		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 20,
+				true, Color.DKGRAY);
 		mFont.load();
 
 		loadSkInfoFile();
@@ -160,7 +151,6 @@ public class MainScene extends Scene implements OnClickListener {
 
 	private void addDataInfo(String dataInfo) {
 		try {
-			System.out.println("===========----------------------------------===");
 			JSONObject info = new JSONObject(dataInfo).getJSONObject("weatherinfo");
 			mWeatherInfo.setTodayTemp(info.getString("temp1"));
 			mWeatherInfo.setCurState(info.getString("img_title1"));
@@ -201,7 +191,7 @@ public class MainScene extends Scene implements OnClickListener {
 		c.set(Calendar.DAY_OF_MONTH, j + i);
 		System.out.println("==============" + c.toString());
 		int index = c.get((Calendar.DAY_OF_WEEK));
-		return c.get(Calendar.DATE) + "日" + (weeks[index-1]) + ":" + string + " : " + string2;
+		return c.get(Calendar.DATE) + "日" + (weeks[index - 1]) + ":" + string + " : " + string2;
 	}
 
 	private WeatherInfo mWeatherInfo = new WeatherInfo("", "", "", "");
@@ -225,8 +215,8 @@ public class MainScene extends Scene implements OnClickListener {
 	private WeatherInfo parserSkInfoFile(String jsonStr) {
 		try {
 			JSONObject info = new JSONObject(jsonStr).getJSONObject("weatherinfo");
-			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"),
-					info.getString("SD"), info.getString("time"));
+			WeatherInfo res = new WeatherInfo(info.getString("temp"), info.getString("WD") + info.getString("WS"), info.getString("SD"),
+					info.getString("time"));
 			return res;
 		} catch (JSONException e) {
 			e.printStackTrace();
