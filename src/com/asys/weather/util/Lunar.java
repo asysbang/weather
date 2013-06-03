@@ -22,7 +22,7 @@ public class Lunar {
 	}
 
 	public String toString() {
-		return mCyclicalYear + mAnimalsYear + "年 " + mLunarMonth + "月 " + mLunarDay;
+		return mCyclicalYear + mAnimalsYear + "年" + mLunarMonth + "月" + mLunarDay;
 	}
 
 	public String getCyclicalYear() {

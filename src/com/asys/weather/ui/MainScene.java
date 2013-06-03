@@ -15,7 +15,6 @@ import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.entity.text.TextOptions;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
@@ -27,6 +26,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtla
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +56,7 @@ public class MainScene extends Scene implements OnClickListener {
 	private WeekPage mWeekPage;
 
 	private AdPage mAdPage;
+	private SettingPage mSettingPage;
 
 	public MainScene(BaseGameActivity activity) {
 		mActivity = activity;
@@ -63,22 +64,24 @@ public class MainScene extends Scene implements OnClickListener {
 		mLifePage = new LifePage();
 		mWeekPage = new WeekPage();
 		mAdPage = new AdPage();
+		mSettingPage = new SettingPage();
 	}
 
 	private Font mFont;
 
-	private BitmapTextureAtlas tabBgAtlas, contentBgAtlas;
+	private BitmapTextureAtlas tabBgAtlas, contentBgAtlas, titleBgAtlas;
 
-	private TextureRegion tabBgRegion, contentBgRegion;
+	private TextureRegion tabBgRegion, contentBgRegion, titleBgRegion;
 
-	private Sprite tabBg, contentBg;
+	private Sprite tabBg, contentBg, titleBg;
 
-	private ButtonSprite tab, tab1, tab2, tab3, tab4;
+	private ButtonSprite tab, tab1, tab2, tab3, tab4, refreshSprite;
 
-	private BuildableBitmapTextureAtlas tabAtlsa;
+	private BuildableBitmapTextureAtlas tabAtlsa, refreshAtlas;
 
 	private ITextureRegion tabHomeNormalRegion, tabHomePressedRegion, tabUpdateNormalRegion, tabUpdatePressedRegion, tabWeekNormalRegion,
-			tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion;
+			tabWeekPressedRegion, tabLifeNormalRegion, tabLifePressedRegion, tabAdNormalRegion, tabAdPressedRegion, refreshRegion,
+			refreshPressedRegion;
 
 	private Text appName, strDate, lunarDate;
 
@@ -93,25 +96,39 @@ public class MainScene extends Scene implements OnClickListener {
 		tabBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabBgAtlas, mActivity, "tab_bg.png", 0, 0);
 		tabBgAtlas.load();
 
+		titleBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		titleBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(titleBgAtlas, mActivity, "title_bg.png", 0, 0);
+		titleBgAtlas.load();
+
+		refreshAtlas = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		refreshRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(refreshAtlas, mActivity, "refresh_normal.png");
+		refreshPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(refreshAtlas, mActivity, "refresh_pressed.png");
+		try {
+			refreshAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
+			refreshAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			e.printStackTrace();
+		}
+
 		contentBgAtlas = new BitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		contentBgRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(contentBgAtlas, mActivity, "content_bg.jpg", 0, 0);
 		contentBgAtlas.load();
 
 		tabAtlsa = new BuildableBitmapTextureAtlas(mActivity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_update_nromal.png");
+		tabUpdateNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_update_normal.png");
 		tabUpdatePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_update_pressed.png");
 
-		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_nromal.png");
+		tabHomeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_normal.png");
 		tabHomePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_home_pressed.png");
 
-		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_nromal.png");
+		tabWeekNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_normal.png");
 		tabWeekPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_week_pressed.png");
 
-		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_nromal.png");
+		tabLifeNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_normal.png");
 		tabLifePressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_life_pressed.png");
 
-		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_nromal.png");
+		tabAdNormalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_normal.png");
 		tabAdPressedRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tabAtlsa, mActivity, "tab_ad_pressed.png");
 		try {
 			tabAtlsa.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(1, 1, 1));
@@ -125,7 +142,7 @@ public class MainScene extends Scene implements OnClickListener {
 
 		FontFactory.setAssetBasePath("fonts/");
 
-		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 20,
+		mFont = FontFactory.createFromAsset(mActivity.getFontManager(), pBitmapTextureAtlas, mActivity.getAssets(), "weather.ttf", 18,
 				true, Color.DKGRAY);
 		mFont.load();
 
@@ -199,7 +216,6 @@ public class MainScene extends Scene implements OnClickListener {
 		c.setTime(date);
 		int j = c.get(Calendar.DAY_OF_MONTH);
 		c.set(Calendar.DAY_OF_MONTH, j + i);
-		System.out.println("==============" + c.toString());
 		int index = c.get((Calendar.DAY_OF_WEEK));
 		return c.get(Calendar.DATE) + "日" + (weeks[index - 1]) + ":" + string + " : " + string2;
 	}
@@ -237,20 +253,20 @@ public class MainScene extends Scene implements OnClickListener {
 	public void loadScene() {
 		float tabLeft = 10;
 		float tabWidth = tabHomeNormalRegion.getWidth();
-		tab = new ButtonSprite(tabLeft, 470, tabHomeNormalRegion, tabHomePressedRegion, mActivity.getVertexBufferObjectManager());
-		tab1 = new ButtonSprite(tabLeft + tabWidth, 470, tabWeekNormalRegion, tabWeekPressedRegion,
-				mActivity.getVertexBufferObjectManager());
-		tab2 = new ButtonSprite(tabLeft + tabWidth * 2, 470, tabLifeNormalRegion, tabLifePressedRegion,
-				mActivity.getVertexBufferObjectManager());
-		tab3 = new ButtonSprite(tabLeft + tabWidth * 3, 470, tabAdNormalRegion, tabAdPressedRegion,
-				mActivity.getVertexBufferObjectManager());
-		tab4 = new ButtonSprite(tabLeft + tabWidth * 4, 470, tabUpdateNormalRegion, tabUpdatePressedRegion,
-				mActivity.getVertexBufferObjectManager());
+		VertexBufferObjectManager vertexBufferObjectManager = mActivity.getVertexBufferObjectManager();
+		tab = new ButtonSprite(tabLeft, 470, tabHomeNormalRegion, tabHomePressedRegion, vertexBufferObjectManager);
+		tab1 = new ButtonSprite(tabLeft + tabWidth, 470, tabWeekNormalRegion, tabWeekPressedRegion, vertexBufferObjectManager);
+		tab2 = new ButtonSprite(tabLeft + tabWidth * 2, 470, tabLifeNormalRegion, tabLifePressedRegion, vertexBufferObjectManager);
+		tab3 = new ButtonSprite(tabLeft + tabWidth * 3, 470, tabAdNormalRegion, tabAdPressedRegion, vertexBufferObjectManager);
+		tab4 = new ButtonSprite(tabLeft + tabWidth * 4, 470, tabUpdateNormalRegion, tabUpdatePressedRegion, vertexBufferObjectManager);
 
-		tabBg = new Sprite(0, 460, tabBgRegion, mActivity.getVertexBufferObjectManager());
-		contentBg = new Sprite(0, 0, contentBgRegion, mActivity.getVertexBufferObjectManager());
+		tabBg = new Sprite(0, 460, tabBgRegion, vertexBufferObjectManager);
+		contentBg = new Sprite(0, 0, contentBgRegion, vertexBufferObjectManager);
+
+		titleBg = new Sprite(5, 2, titleBgRegion, vertexBufferObjectManager);
 
 		attachChild(contentBg);
+		attachChild(titleBg);
 		attachChild(tabBg);
 		attachChild(tab);
 		attachChild(tab1);
@@ -258,19 +274,23 @@ public class MainScene extends Scene implements OnClickListener {
 		attachChild(tab3);
 		attachChild(tab4);
 
-		appName = new Text(20, 20, mFont, "aSys天气", mActivity.getVertexBufferObjectManager());
+		refreshSprite = new ButtonSprite(255, 9, refreshRegion, refreshPressedRegion, vertexBufferObjectManager);
+		attachChild(refreshSprite);
+
+		appName = new Text(15, 27, mFont, "aSys天气", vertexBufferObjectManager);
 		attachChild(appName);
 
-		strDate = new Text(120, 10, mFont, "" + mWeatherInfo.getStrDate(), 40, mActivity.getVertexBufferObjectManager());
+		strDate = new Text(105, 17, mFont, "" + mWeatherInfo.getStrDate(), 40, vertexBufferObjectManager);
 		attachChild(strDate);
 
-		lunarDate = new Text(120, 30, mFont, "" + mWeatherInfo.getLunarDate(), 40, mActivity.getVertexBufferObjectManager());
+		lunarDate = new Text(105, 37, mFont, "" + mWeatherInfo.getLunarDate(), 40, vertexBufferObjectManager);
 		attachChild(lunarDate);
 
-		mHomePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
-		mLifePage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
-		mWeekPage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager(), mWeatherInfo);
-		mAdPage.loadScene(this, mFont, mActivity.getVertexBufferObjectManager());
+		mHomePage.loadScene(this, mFont, vertexBufferObjectManager, mWeatherInfo);
+		mLifePage.loadScene(this, mFont, vertexBufferObjectManager, mWeatherInfo);
+		mWeekPage.loadScene(this, mFont, vertexBufferObjectManager, mWeatherInfo);
+		mAdPage.loadScene(this, mFont, vertexBufferObjectManager);
+		mSettingPage.loadScene(this, mFont, vertexBufferObjectManager);
 
 		// register touch areas
 		tab.setOnClickListener(this);
@@ -285,6 +305,9 @@ public class MainScene extends Scene implements OnClickListener {
 		registerTouchArea(tab3);
 		tab4.setOnClickListener(this);
 		registerTouchArea(tab4);
+
+		refreshSprite.setOnClickListener(this);
+		registerTouchArea(refreshSprite);
 		setTouchAreaBindingOnActionDownEnabled(true);
 	}
 
@@ -304,6 +327,10 @@ public class MainScene extends Scene implements OnClickListener {
 			mAdPage.hide(mActivity);
 
 			break;
+		case PAGE_SETTING:
+			mSettingPage.hide(mActivity);
+
+			break;
 		}
 	}
 
@@ -311,9 +338,7 @@ public class MainScene extends Scene implements OnClickListener {
 		if (!selfToSelf && curPage == tagPage) {
 			return;
 		}
-		if (tagPage != PAGE_SETTING) {
-			hideCurPage();
-		}
+		hideCurPage();
 		switch (tagPage) {
 		case PAGE_HOME:
 			mHomePage.show(mActivity, mWeatherInfo);
@@ -334,7 +359,8 @@ public class MainScene extends Scene implements OnClickListener {
 
 			break;
 		case PAGE_SETTING:
-			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
+			mSettingPage.show(mActivity, mWeatherInfo);
+			curPage = PAGE_SETTING;
 			break;
 		}
 
@@ -353,6 +379,8 @@ public class MainScene extends Scene implements OnClickListener {
 			tagPage = PAGE_AD;
 		} else if (btnSprite == tab4) {
 			tagPage = PAGE_SETTING;
+		} else if (btnSprite == refreshSprite) {
+			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
 		}
 		switchToPage(tagPage, false);
 

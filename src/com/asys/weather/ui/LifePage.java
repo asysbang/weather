@@ -37,26 +37,26 @@ public class LifePage {
 
 	public void loadScene(Scene scene, Font font, VertexBufferObjectManager vertexBufferObjectManager, WeatherInfo weather) {
 
-		dress = new Text(-Config.CAMERA_WIDTH, 70, font, "穿衣指数：" + weather.getDress(), 40, vertexBufferObjectManager);
+		dress = new Text(-Config.CAMERA_WIDTH, 110, font, "穿衣指数：" + weather.getDress(), 40, vertexBufferObjectManager);
 		scene.attachChild(dress);
 
 		// dressTip = new Text(-Config.CAMERA_WIDTH, 70, font, "穿衣指南：" +
 		// weather.getDressTip(), 40, vertexBufferObjectManager);
 		// scene.attachChild(dressTip);
 
-		uvRays = new Text(-Config.CAMERA_WIDTH, 110, font, "紫外线指数：" + weather.getUvRays(), 40, vertexBufferObjectManager);
+		uvRays = new Text(-Config.CAMERA_WIDTH, 150, font, "紫外线指数：" + weather.getUvRays(), 40, vertexBufferObjectManager);
 		scene.attachChild(uvRays);
 
-		car = new Text(-Config.CAMERA_WIDTH, 150, font, "洗车指数：" + weather.getCar(), 40, vertexBufferObjectManager);
+		car = new Text(-Config.CAMERA_WIDTH, 190, font, "洗车指数：" + weather.getCar(), 40, vertexBufferObjectManager);
 		scene.attachChild(car);
 
-		travel = new Text(-Config.CAMERA_WIDTH, 190, font, "出行指数：" + weather.getTravel(), 40, vertexBufferObjectManager);
+		travel = new Text(-Config.CAMERA_WIDTH, 230, font, "出行指数：" + weather.getTravel(), 40, vertexBufferObjectManager);
 		scene.attachChild(travel);
 
-		exe = new Text(-Config.CAMERA_WIDTH, 230, font, "晨练指数：" + weather.getExe(), 40, vertexBufferObjectManager);
+		exe = new Text(-Config.CAMERA_WIDTH, 270, font, "晨练指数：" + weather.getExe(), 40, vertexBufferObjectManager);
 		scene.attachChild(exe);
 
-		sun = new Text(-Config.CAMERA_WIDTH, 270, font, "晾衣指数：" + weather.getSun(), 40, vertexBufferObjectManager);
+		sun = new Text(-Config.CAMERA_WIDTH, 310, font, "晾衣指数：" + weather.getSun(), 40, vertexBufferObjectManager);
 		scene.attachChild(sun);
 
 	}
