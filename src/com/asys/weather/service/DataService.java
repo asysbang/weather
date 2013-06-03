@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 public class DataService extends Service {
 
+	private int resFlag = -1;
+
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
 
 		@Override
@@ -39,21 +41,24 @@ public class DataService extends Service {
 
 		@Override
 		protected String doInBackground(String... params) {
-			updateWeatherDataInfo();
-			updateWeatherSkInfo();
+			resFlag = updateWeatherDataInfo();
+			if (resFlag == 1) {
+				updateWeatherSkInfo();
+			}
 			return "ok";
 		}
 
 		@Override
 		protected void onPostExecute(String result) {
-			sendBroadcast(new Intent(Config.CMD_UPDATE));
-			Toast.makeText(DataService.this, "update succefully", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(Config.CMD_UPDATE);
+			intent.putExtra("RES_FLAG", resFlag);
+			sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
 
 	}
 
-	private void updateWeatherSkInfo() {
+	private int updateWeatherSkInfo() {
 		BufferedWriter bw = null;
 		try {
 			File fileStreamPath = getFileStreamPath(Config.FILE_SK_INFO);
@@ -69,6 +74,7 @@ public class DataService extends Service {
 			while ((line = br.readLine()) != null) {
 				bw.write(line);
 			}
+			return 1;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -83,9 +89,10 @@ public class DataService extends Service {
 				}
 			}
 		}
+		return -1;
 	}
 
-	private void updateWeatherDataInfo() {
+	private int updateWeatherDataInfo() {
 		BufferedWriter bw = null;
 		try {
 			File fileStreamPath = getFileStreamPath(Config.FILE_DATA_INFO);
@@ -100,6 +107,7 @@ public class DataService extends Service {
 			while ((line = br.readLine()) != null) {
 				bw.write(line);
 			}
+			return 1;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -114,6 +122,7 @@ public class DataService extends Service {
 				}
 			}
 		}
+		return -1;
 	}
 
 	@Override

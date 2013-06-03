@@ -27,19 +27,19 @@ import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.ui.activity.BaseGameActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Intent;
+import android.app.ProgressDialog;
 import android.graphics.Color;
 
+import com.asys.weather.Weather;
 import com.asys.weather.model.WeatherInfo;
 import com.asys.weather.util.Config;
 
 public class MainScene extends Scene implements OnClickListener {
 
-	private BaseGameActivity mActivity;
+	private Weather mActivity;
 
 	private static final int PAGE_HOME = 0;
 	private static final int PAGE_WEEK = 1;
@@ -58,13 +58,16 @@ public class MainScene extends Scene implements OnClickListener {
 	private AdPage mAdPage;
 	private SettingPage mSettingPage;
 
-	public MainScene(BaseGameActivity activity) {
+	public MainScene(Weather activity) {
 		mActivity = activity;
 		mHomePage = new HomePage();
 		mLifePage = new LifePage();
 		mWeekPage = new WeekPage();
 		mAdPage = new AdPage();
 		mSettingPage = new SettingPage();
+
+		mUpdatingDialog = new ProgressDialog(mActivity);
+		mUpdatingDialog.setMessage("loading.....");
 	}
 
 	private Font mFont;
@@ -156,6 +159,7 @@ public class MainScene extends Scene implements OnClickListener {
 		loadDataInfoFile();
 		strDate.setText("" + mWeatherInfo.getStrDate());
 		lunarDate.setText("" + mWeatherInfo.getLunarDate());
+		mUpdatingDialog.dismiss();
 		switchToPage(curPage, true);
 
 	}
@@ -380,10 +384,12 @@ public class MainScene extends Scene implements OnClickListener {
 		} else if (btnSprite == tab4) {
 			tagPage = PAGE_SETTING;
 		} else if (btnSprite == refreshSprite) {
-			mActivity.sendBroadcast(new Intent(Config.CMD_QUERY));
+			mActivity.startUpdate();
+			return;
 		}
 		switchToPage(tagPage, false);
-
 	}
+
+	private ProgressDialog mUpdatingDialog;
 
 }
