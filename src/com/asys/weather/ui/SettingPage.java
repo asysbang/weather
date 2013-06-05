@@ -11,7 +11,7 @@ import com.asys.weather.util.Config;
 
 public class SettingPage {
 
-	private Text tip;
+	private Text city, source, email, tip;
 
 	public SettingPage() {
 
@@ -23,7 +23,17 @@ public class SettingPage {
 
 	public void loadScene(Scene scene, Font font, VertexBufferObjectManager vertexBufferObjectManager) {
 
-		tip = new Text(-Config.CAMERA_WIDTH, 230, font, "aSys天气demo版本 \r\nhttp://www.asysbang.com", 40, vertexBufferObjectManager);
+		city = new Text(-Config.CAMERA_WIDTH, 120, font, "当前城市：北京", 40, vertexBufferObjectManager);
+		scene.attachChild(city);
+
+		source = new Text(-Config.CAMERA_WIDTH, 160, font, "代码：https://github.com/\r\n         asysbang/weather.git", 60,
+				vertexBufferObjectManager);
+		scene.attachChild(source);
+
+		email = new Text(-Config.CAMERA_WIDTH, 220, font, "邮件：asysbang@163.com", 40, vertexBufferObjectManager);
+		scene.attachChild(email);
+
+		tip = new Text(-Config.CAMERA_WIDTH, 350, font, "aSys天气demo版本 \r\n\r\nhttp://www.asysbang.com", 40, vertexBufferObjectManager);
 		scene.attachChild(tip);
 
 	}
@@ -32,7 +42,10 @@ public class SettingPage {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				tip.registerEntityModifier(new MoveOutModifier(0));
+				city.registerEntityModifier(new MoveOutModifier(0));
+				source.registerEntityModifier(new MoveOutModifier(1));
+				email.registerEntityModifier(new MoveOutModifier(2));
+				tip.registerEntityModifier(new MoveOutModifier(3));
 			}
 		});
 	}
@@ -42,6 +55,9 @@ public class SettingPage {
 		activity.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
+				city.registerEntityModifier(new MoveInModifier(0));
+				source.registerEntityModifier(new MoveInModifier(1));
+				email.registerEntityModifier(new MoveInModifier(2));
 				tip.registerEntityModifier(new MoveInModifier(3));
 			}
 		});
